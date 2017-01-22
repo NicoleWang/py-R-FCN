@@ -8,7 +8,7 @@ layer {
   python_param {
     module: 'roi_data_layer.layer'
     layer: 'RoIDataLayer'
-    param_str: "'num_classes': 21"
+    param_str: "'num_classes': 2"
   }
 }
 
@@ -527,7 +527,7 @@ layer {
   python_param {
     module: 'rpn.proposal_target_layer'
     layer: 'ProposalTargetLayer'
-    param_str: "'num_classes': 21"
+    param_str: "'num_classes': 2"
   }
 }
 
@@ -576,10 +576,10 @@ layer {
   }
 }
 layer {
-  name: "fc7"
+  name: "text_fc7"
   type: "InnerProduct"
   bottom: "fc6"
-  top: "fc7"
+  top: "text_fc7"
   param {
     lr_mult: 1
   }
@@ -593,23 +593,23 @@ layer {
 layer {
   name: "relu7"
   type: "ReLU"
-  bottom: "fc7"
-  top: "fc7"
+  bottom: "text_fc7"
+  top: "text_fc7"
 }
 layer {
   name: "drop7"
   type: "Dropout"
-  bottom: "fc7"
-  top: "fc7"
+  bottom: "text_fc7"
+  top: "text_fc7"
   dropout_param {
     dropout_ratio: 0.5
   }
 }
 layer {
-  name: "cls_score"
+  name: "text_cls_score"
   type: "InnerProduct"
-  bottom: "fc7"
-  top: "cls_score"
+  bottom: "text_fc7"
+  top: "text_cls_score"
   param {
     lr_mult: 1
   }
@@ -617,7 +617,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 21
+    num_output: 2
     weight_filler {
       type: "gaussian"
       std: 0.01
@@ -629,10 +629,10 @@ layer {
   }
 }
 layer {
-  name: "bbox_pred"
+  name: "text_bbox_pred"
   type: "InnerProduct"
-  bottom: "fc7"
-  top: "bbox_pred"
+  bottom: "text_fc7"
+  top: "text_bbox_pred"
   param {
     lr_mult: 1
   }
@@ -640,7 +640,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 84
+    num_output: 8
     weight_filler {
       type: "gaussian"
       std: 0.001
@@ -652,22 +652,22 @@ layer {
   }
 }
 layer {
-  name: "loss_cls"
+  name: "text_loss_cls"
   type: "SoftmaxWithLoss"
-  bottom: "cls_score"
+  bottom: "text_cls_score"
   bottom: "labels"
   propagate_down: 1
   propagate_down: 0
-  top: "loss_cls"
+  top: "text_loss_cls"
   loss_weight: 1
 }
 layer {
-  name: "loss_bbox"
+  name: "text_loss_bbox"
   type: "SmoothL1Loss"
-  bottom: "bbox_pred"
+  bottom: "text_bbox_pred"
   bottom: "bbox_targets"
   bottom: "bbox_inside_weights"
   bottom: "bbox_outside_weights"
-  top: "loss_bbox"
+  top: "text_loss_bbox"
   loss_weight: 1
 }

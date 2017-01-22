@@ -26,7 +26,8 @@ class ProposalLayer(caffe.Layer):
         layer_params = yaml.load(self.param_str)
 
         self._feat_stride = layer_params['feat_stride']
-        anchor_scales = layer_params.get('scales', (8, 16, 32))
+        #anchor_scales = layer_params.get('scales', (8, 16, 32))#original
+        anchor_scales = layer_params.get('scales', (2, 4, 8))
         self._anchors = generate_anchors(scales=np.array(anchor_scales))
         self._num_anchors = self._anchors.shape[0]
 
@@ -129,7 +130,8 @@ class ProposalLayer(caffe.Layer):
 
         # 3. remove predicted boxes with either height or width < threshold
         # (NOTE: convert min_size to input image scale stored in im_info[2])
-        keep = _filter_boxes(proposals, min_size * im_info[2])
+        #keep = _filter_boxes(proposals, min_size * im_info[2])
+        keep = _filter_boxes(proposals, min_size )
         proposals = proposals[keep, :]
         scores = scores[keep]
 

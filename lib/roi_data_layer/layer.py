@@ -43,6 +43,7 @@ class RoIDataLayer(caffe.Layer):
     def _get_next_minibatch_inds(self):
         """Return the roidb indices for the next minibatch."""
         if self._cur + cfg.TRAIN.IMS_PER_BATCH >= len(self._roidb):
+            print "One epoch done!!"
             self._shuffle_roidb_inds()
 
         db_inds = self._perm[self._cur:self._cur + cfg.TRAIN.IMS_PER_BATCH]
@@ -59,6 +60,7 @@ class RoIDataLayer(caffe.Layer):
             return self._blob_queue.get()
         else:
             db_inds = self._get_next_minibatch_inds()
+            #print db_inds
             minibatch_db = [self._roidb[i] for i in db_inds]
             return get_minibatch(minibatch_db, self._num_classes)
 

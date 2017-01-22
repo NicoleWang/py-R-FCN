@@ -24,6 +24,7 @@ def get_minibatch(roidb, num_classes):
         'num_images ({}) must divide BATCH_SIZE ({})'. \
         format(num_images, cfg.TRAIN.BATCH_SIZE)
     rois_per_image = np.inf if cfg.TRAIN.BATCH_SIZE == -1 else cfg.TRAIN.BATCH_SIZE / num_images
+    #print "rois_per_image: ", rois_per_image
     fg_rois_per_image = np.round(cfg.TRAIN.FG_FRACTION * rois_per_image)
 
     # Get the input image blob, formatted for caffe
@@ -31,6 +32,7 @@ def get_minibatch(roidb, num_classes):
 
     blobs = {'data': im_blob}
 
+    #print roidb[0]['image']
     if cfg.TRAIN.HAS_RPN:
         assert len(im_scales) == 1, "Single batch only"
         assert len(roidb) == 1, "Single batch only"

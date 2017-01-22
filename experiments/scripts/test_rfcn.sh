@@ -42,35 +42,22 @@ case $DATASET in
     TRAIN_IMDB="text_chn_train"
     TEST_IMDB="text_chn_test"
     PT_DIR="pascal_voc"
-    ITERS=500000
+    ITERS=150000
     ;;
   *)
     echo "No dataset given"
     exit
     ;;
 esac
-
-LOG="experiments/logs/rfcn_end2end_${NET}_${EXTRA_ARGS_SLUG}.txt.`date +'%Y-%m-%d_%H-%M-%S'`"
-exec &> >(tee -a "$LOG")
-echo Logging output to "$LOG"
-
-#--weights data/imagenet_models/${NET}-model.caffemodel \
-#--weights output/rfcn_end2end/text_chn_train/resnet50_rfcn_iter_20000.caffemodel \
-time ./tools/train_net.py --gpu ${GPU_ID} \
-  --solver models/${PT_DIR}/${NET}/rfcn_end2end/solver.prototxt \
-  --weights data/imagenet_models/${NET}.v2.caffemodel\
-  --imdb ${TRAIN_IMDB} \
-  --iters ${ITERS} \
-  --cfg experiments/cfgs/rfcn_end2end.yml \
-  ${EXTRA_ARGS}
-
 set +x
-NET_FINAL=`grep -B 1 "done solving" ${LOG} | grep "Wrote snapshot" | awk '{print $4}'`
+NET_FINAL=$4
 set -x
 
+echo ${NET_FINAL}
+#exit
 time ./tools/test_net.py --gpu ${GPU_ID} \
-  --def models/${PT_DIR}/${NET}/rfcn_end2end/test_agnostic.prototxt \
+  --def models/${PT_DIR}/${NET}/rfcn_end2end/test.prototxt \
   --net ${NET_FINAL} \
   --imdb ${TEST_IMDB} \
-  --cfg experiments/cfgs/rfcn_end2end.yml \
-  ${EXTRA_ARGS}
+  --cfg experiments/cfgs/rfcn_end2end.yml 
+#  ${EXTRA_ARGS}
