@@ -64,7 +64,8 @@ class text(imdb):
         """
         Construct an image path from the image's "index" identifier.
         """
-        image_path = os.path.join(self._data_path, 'GrayImages', index)
+        #image_path = os.path.join(self._data_path, 'GrayImages', index)
+        image_path = os.path.join(self._data_path, 'JPEGImages', index)
         assert os.path.exists(image_path), \
                 'Path does not exist: {}'.format(image_path)
         return image_path

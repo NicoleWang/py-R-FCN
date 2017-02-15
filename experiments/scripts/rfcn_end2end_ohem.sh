@@ -1,10 +1,10 @@
 #!/bin/bash
 # Usage:
-# ./experiments/scripts/rfcn_end2end_ohem.sh GPU NET DATASET [options args to {train,test}_net.py]
+# ./experiments/scripts/rfcn_end2end.sh GPU NET DATASET [options args to {train,test}_net.py]
 # DATASET is either pascal_voc or coco.
 #
 # Example:
-# ./experiments/scripts/rfcn_end2end_ohem.sh 0 ResNet50 pascal_voc \
+# ./experiments/scripts/rfcn_end2end.sh 0 ResNet50 pascal_voc \
 #   --set EXP_DIR foobar RNG_SEED 42 TRAIN.SCALES "[400, 500, 600, 700]"
 
 set -x
@@ -24,7 +24,7 @@ EXTRA_ARGS_SLUG=${EXTRA_ARGS// /_}
 
 case $DATASET in
   pascal_voc)
-    TRAIN_IMDB="voc_2007_trainval+voc_2012_trainval"
+    TRAIN_IMDB="voc_0712_trainval"
     TEST_IMDB="voc_0712_test"
     PT_DIR="pascal_voc"
     ITERS=110000
@@ -36,7 +36,13 @@ case $DATASET in
     TRAIN_IMDB="coco_2014_train"
     TEST_IMDB="coco_2014_val"
     PT_DIR="coco"
-    ITERS=1920000
+    ITERS=960000
+    ;;
+  text_chn)
+    TRAIN_IMDB="text_chn_train"
+    TEST_IMDB="text_chn_test"
+    PT_DIR="pascal_voc"
+    ITERS=500000
     ;;
   *)
     echo "No dataset given"
@@ -48,23 +54,23 @@ LOG="experiments/logs/rfcn_end2end_${NET}_${EXTRA_ARGS_SLUG}.txt.`date +'%Y-%m-%
 exec &> >(tee -a "$LOG")
 echo Logging output to "$LOG"
 
-
+#--weights data/imagenet_models/${NET}-model.caffemodel \
+#--weights output/rfcn_end2end/text_chn_train/resnet50_rfcn_iter_20000.caffemodel \
 time ./tools/train_net.py --gpu ${GPU_ID} \
   --solver models/${PT_DIR}/${NET}/rfcn_end2end/solver_ohem.prototxt \
-  --weights data/imagenet_models/${NET}-model.caffemodel \
+  --weights data/imagenet_models/${NET}-model.caffemodel\
   --imdb ${TRAIN_IMDB} \
   --iters ${ITERS} \
-  --cfg experiments/cfgs/rfcn_end2end_ohem.yml \
+  --cfg experiments/cfgs/rfcn_end2end.yml \
   ${EXTRA_ARGS}
 
-
 set +x
-NET_FINAL=`tail -n 100 ${LOG} | grep -B 1 "done solving" | grep "Wrote snapshot" | awk '{print $4}'`
+NET_FINAL=`grep -B 1 "done solving" ${LOG} | grep "Wrote snapshot" | awk '{print $4}'`
 set -x
 
 time ./tools/test_net.py --gpu ${GPU_ID} \
   --def models/${PT_DIR}/${NET}/rfcn_end2end/test_agnostic.prototxt \
   --net ${NET_FINAL} \
   --imdb ${TEST_IMDB} \
-  --cfg experiments/cfgs/rfcn_end2end_ohem.yml \
+  --cfg experiments/cfgs/rfcn_end2end.yml \
   ${EXTRA_ARGS}

@@ -1,4 +1,4 @@
-name: "ResNet-101"
+name: "ResNet101"
 
 input: "data"
 input_shape {
@@ -6928,7 +6928,7 @@ layer {
 layer {
   name: "rpn_conv/3x3"
   type: "Convolution"
-  bottom: "res4b22"
+  bottom: "res5c"
   top: "rpn/output"
   param { lr_mult: 1.0 decay_mult: 1.0 }
   param { lr_mult: 2.0 decay_mult: 0 }
@@ -7051,8 +7051,7 @@ layer {
     name: "rfcn_cls"
     type: "Convolution"
     convolution_param {
-        #num_output: 1029 #21*(7^2) cls_num*(score_maps_size^2)
-        num_output: 98 #2*(7^2) cls_num*(score_maps_size^2)
+        num_output: 1029 #21*(7^2) cls_num*(score_maps_size^2)
         kernel_size: 1
         pad: 0
         weight_filler {
@@ -7077,7 +7076,7 @@ layer {
     name: "rfcn_bbox"
     type: "Convolution"
     convolution_param {
-        num_output: 392 #8*(7^2) cls_num*(score_maps_size^2)
+        num_output: 4116 #8*(7^2) cls_num*(score_maps_size^2)
         kernel_size: 1
         pad: 0
         weight_filler {
@@ -7106,7 +7105,7 @@ layer {
     type: "PSROIPooling"
     psroi_pooling_param {
         spatial_scale: 0.0625
-        output_dim: 2
+        output_dim: 21
         group_size: 7
     }
 }
@@ -7132,7 +7131,7 @@ layer {
     type: "PSROIPooling"
     psroi_pooling_param {
         spatial_scale: 0.0625
-        output_dim: 8
+        output_dim: 84
         group_size: 7
     }
 }
@@ -7152,10 +7151,10 @@ layer {
 
 #-----------------------output------------------------
 layer {
-   name: "cls_prob"
-   type: "Softmax"
-   bottom: "cls_score"
-   top: "cls_prob_pre"
+    name: "cls_prob"
+    type: "Softmax"
+    bottom: "cls_score"
+    top: "cls_prob_pre"
 }
 
 layer {
@@ -7166,7 +7165,7 @@ layer {
     reshape_param {
         shape {
             dim: -1
-            dim: 2
+            dim: 21
         }
     }
 }
@@ -7179,7 +7178,7 @@ layer {
     reshape_param {
         shape {
             dim: -1
-            dim: 8
+            dim: 84
         }
     }
 }
