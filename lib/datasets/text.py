@@ -27,7 +27,11 @@ class text(imdb):
         self._image_set = image_set # image_set: chn / eng
         self._devkit_path = self._get_default_path() if devkit_path is None \
                             else devkit_path
-        self._data_path = os.path.join(self._devkit_path, self._image_set + '_data')
+        if self._split == 'train':
+            self._data_path = cfg.TRAIN_DIR
+        if self._split == 'test':
+            self._data_path = cfg.TEST_DIR
+        #self._data_path = os.path.join(self._devkit_path, self._image_set + '_data')
         #print self._devkit_path
         #print self._data_path
         self._classes = ('__background__', # always index 0
@@ -75,8 +79,9 @@ class text(imdb):
         """
         # Example path to image set file:
         # self._devkit_path + /VOCdevkit2007/VOC2007/ImageSets/Main/val.txt
-        image_set_file = os.path.join(self._data_path, 'ImageSets',
-                                      self._split + '.txt')
+#        image_set_file = os.path.join(self._data_path, 'ImageSets',
+#                                      self._split + '.txt')
+        image_set_file = os.path.join(self._data_path, 'imname_list.txt')
         print self._devkit_path
         print self._data_path
         assert os.path.exists(image_set_file), \

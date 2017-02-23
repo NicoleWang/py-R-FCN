@@ -56,7 +56,7 @@ set -x
 echo ${NET_FINAL}
 #exit
 time ./tools/test_net.py --gpu ${GPU_ID} \
-  --def models/${PT_DIR}/${NET}/rfcn_end2end/test.prototxt \
+  --def models/${PT_DIR}/${NET}/rfcn_end2end/test_agnostic.prototxt \
   --net ${NET_FINAL} \
   --imdb ${TEST_IMDB} \
   --cfg experiments/cfgs/rfcn_end2end.yml 

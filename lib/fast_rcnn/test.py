@@ -220,7 +220,8 @@ def write_result(boxes, save_path):
     for i in xrange(0, boxes.shape[0]):
         box = boxes[i, 0:4].astype(int)
         score = boxes[i, 4]
-        f.write("%d\t%d\t%d\t%d\t%f\n" % (box[0], box[1], box[2], box[3], score))
+        if score >= 0.3:
+            f.write("%d\t%d\t%d\t%d\t%f\n" % (box[0], box[1], box[2], box[3], score))
     f.close()
 
 
@@ -272,7 +273,7 @@ def test_net(net, imdb, max_per_image=400, thresh=-np.inf, vis=False):
 
     if not cfg.TEST.HAS_RPN:
         roidb = imdb.roidb
-
+    save_boxes = [];
     for i in xrange(num_images):
         # filter out any ground truth boxes
         if cfg.TEST.HAS_RPN:
@@ -301,6 +302,7 @@ def test_net(net, imdb, max_per_image=400, thresh=-np.inf, vis=False):
         for j in xrange(1, imdb.num_classes):
             inds = np.where(scores[:, j] > thresh)[0]
             cls_scores = scores[inds, j]
+            #cls_boxes = boxes[inds, j*4:(j+1)*4]
             if cfg.TEST.AGNOSTIC:
                 cls_boxes = boxes[inds, 4:8]
             else:
@@ -308,7 +310,10 @@ def test_net(net, imdb, max_per_image=400, thresh=-np.inf, vis=False):
             cls_dets = np.hstack((cls_boxes, cls_scores[:, np.newaxis])) \
                 .astype(np.float32, copy=False)
             keep = nms(cls_dets, cfg.TEST.NMS)
+            save_boxes.append(cls_boxes)
+
             cls_dets = cls_dets[keep, :]
+            write_result(cls_dets, txt_path)
             vis = True
             if vis:
                # vis_detections(im, imdb.classes[j], cls_dets)
@@ -331,9 +336,9 @@ def test_net(net, imdb, max_per_image=400, thresh=-np.inf, vis=False):
               .format(i + 1, num_images, _t['im_detect'].average_time,
                       _t['misc'].average_time)
 
-#    det_file = os.path.join(output_dir, 'detections.pkl')
-#    with open(det_file, 'wb') as f:
-#        cPickle.dump(all_boxes, f, cPickle.HIGHEST_PROTOCOL)
+    det_file = os.path.join(output_dir, 'detections.pkl')
+    with open(det_file, 'wb') as f:
+        cPickle.dump(save_boxes, f, cPickle.HIGHEST_PROTOCOL)
 
 #    print 'Evaluating detections'
 #    imdb.evaluate_detections(all_boxes, output_dir)

@@ -17,7 +17,7 @@ export LD_LIBRARY_PATH=:/temp-hdd/tangtang/opencv-2.4.13/release/lib:$LD_LIBRARY
 
 
 
-export PYTHONPATH=/temp-hdd/tangtang/opencv-2.4.13/release/lib:$PYTHONPATH
+export PYTHONPATH=/temp-hdd/tangtang/opencv-2.4.13/release/lib:/home/wangyuzhuo/Experiments/clr-rfcn/lib:$PYTHONPATH
 
 
 #export PYTHONPATH=/home/wangyuzhuo/.py2env/lib/python2.7/site-packages:$PYTHONPATH
