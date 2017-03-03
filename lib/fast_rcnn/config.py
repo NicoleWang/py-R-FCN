@@ -200,8 +200,10 @@ __C.ROOT_DIR = osp.abspath(osp.join(osp.dirname(__file__), '..', '..'))
 
 # Data directory
 __C.DATA_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data'))
-__C.TRAIN_DIR = '/home/wangyuzhuo/wangyuzhuo/Data/train_data/chn_data/train'
-__C.TEST_DIR = '/home/wangyuzhuo/Data/test_data/test_screen/'
+__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/chn_data'))
+__C.TEST_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/test_data/easy100'))
+#__C.TRAIN_DIR = '/home/wangyuzhuo/wangyuzhuo/Data/chn_data/'
+#__C.TEST_DIR = '/home/wangyuzhuo/Data/test_data/easy_100/'
 
 # Model directory
 __C.MODELS_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'models', 'pascal_voc'))
