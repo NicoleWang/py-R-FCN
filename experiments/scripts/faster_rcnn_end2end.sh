@@ -42,7 +42,7 @@ text_chn)
     TRAIN_IMDB="text_chn_train"
     TEST_IMDB="text_chn_test"
     PT_DIR="pascal_voc"
-    ITERS=70000
+    ITERS=250000
     ;;
   *)
     echo "No dataset given"
