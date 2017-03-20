@@ -3598,35 +3598,17 @@ layer {
   top: 'rpn_cls_prob_reshape'
   reshape_param { shape { dim: 0 dim: 18 dim: -1 dim: 0 } }
 }
-#layer {
-#  name: 'proposal'
-#  type: 'Python'
-#  bottom: 'rpn_cls_prob_reshape'
-#  bottom: 'rpn_bbox_pred'
-#  bottom: 'im_info'
-#  top: 'rois'
-#  python_param {
-#    module: 'rpn.proposal_layer'
-#    layer: 'ProposalLayer'
-#    param_str: "'feat_stride': 16"
-#  }
-#}
 layer {
   name: 'proposal'
-  type: 'Proposal'
+  type: 'Python'
   bottom: 'rpn_cls_prob_reshape'
   bottom: 'rpn_bbox_pred'
   bottom: 'im_info'
   top: 'rois'
-  proposal_param {
-      base_size: 16
-      min_size: 16
-      scale: 1
-      scale: 2
-      scale: 4
-      ratio: 0.5
-      ratio: 1.0
-      ratio: 2
+  python_param {
+    module: 'rpn.proposal_layer'
+    layer: 'ProposalLayer'
+    param_str: "'feat_stride': 16"
   }
 }
 
