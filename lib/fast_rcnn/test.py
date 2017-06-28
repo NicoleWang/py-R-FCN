@@ -18,6 +18,14 @@ from fast_rcnn.nms_wrapper import nms
 import cPickle
 from utils.blob import im_list_to_blob
 import os
+import timeit
+
+t1=timeit.default_timer()
+def get_time():
+    return t1
+def set_time():
+    global t1
+    t1=timeit.default_timer()
 
 def _get_image_blob(im):
     """Converts an image into a network input.
@@ -118,7 +126,9 @@ def im_detect(net, im, boxes=None):
             background as object category 0)
         boxes (ndarray): R x (4*K) array of predicted bounding boxes
     """
+    set_time()
     blobs, im_scales = _get_blobs(im, boxes)
+    #print  net.params['conv3_1'][0].data[0, :]
 
     # When mapping from image ROIs to feature map ROIs, there's some aliasing
     # (some distinct image ROIs get mapped to the same feature ROI).
@@ -152,6 +162,11 @@ def im_detect(net, im, boxes=None):
     else:
         forward_kwargs['rois'] = blobs['rois'].astype(np.float32, copy=False)
     blobs_out = net.forward(**forward_kwargs)
+    #import timeit
+    #global t1=timeit.default_timer()
+    #net.forward('conv1_1', 'conv2_1')
+    #t2=timeit.default_timer()
+    #print 'all conv time {} ms '.format((t2 - t1)*1000)
 
     if cfg.TEST.HAS_RPN:
         assert len(im_scales) == 1, "Only single-image batch implemented"
@@ -182,6 +197,8 @@ def im_detect(net, im, boxes=None):
         # Map scores and predictions back to the original set of boxes
         scores = scores[inv_index, :]
         pred_boxes = pred_boxes[inv_index, :]
+    t2 = t2=timeit.default_timer()
+    print 'after props time {} ms '.format((t2 - t1)*1000)
 
     return scores, pred_boxes
 
@@ -313,12 +330,13 @@ def test_net(net, imdb, max_per_image=400, thresh=-np.inf, vis=False):
             save_boxes.append(cls_boxes)
 
             cls_dets = cls_dets[keep, :]
+            #print cls_dets[:, -1]
             write_result(cls_dets, txt_path)
             vis = True
             if vis:
                # vis_detections(im, imdb.classes[j], cls_dets)
                 #print save_path
-                vis_detections_v2(im, imdb.classes[j], cls_dets, save_path)
+                vis_detections_v2(im, imdb.classes[j], cls_dets, save_path, 0.3)
             all_boxes[j][i] = cls_dets
 
         # Limit to max_per_image detections *over all classes*

@@ -12,6 +12,9 @@ from fast_rcnn.config import cfg
 from generate_anchors import generate_anchors
 from fast_rcnn.bbox_transform import bbox_transform_inv, clip_boxes
 from fast_rcnn.nms_wrapper import nms
+import timeit
+from fast_rcnn.test import  get_time
+from fast_rcnn.test import  set_time
 
 DEBUG = False
 
@@ -58,6 +61,10 @@ class ProposalLayer(caffe.Layer):
         # apply NMS with threshold 0.7 to remaining proposals
         # take after_nms_topN proposals after NMS
         # return the top proposals (-> RoIs top, scores top)
+        #t1 = get_time()
+        #t2=timeit.default_timer()
+        #print 'conv time {} ms '.format((t2 - t1)*1000) 
+        #t1=timeit.default_timer()
 
         assert bottom[0].data.shape[0] == 1, \
             'Only single item batches are supported'
@@ -165,6 +172,10 @@ class ProposalLayer(caffe.Layer):
         if len(top) > 1:
             top[1].reshape(*(scores.shape))
             top[1].data[...] = scores
+        #global t1
+        #t2=timeit.default_timer()
+        #print 'proposal layer time {} ms '.format((t2 - t1)*1000)
+        set_time() 
 
     def backward(self, top, propagate_down, bottom):
         """This layer does not propagate gradients."""
