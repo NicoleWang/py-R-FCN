@@ -1,0 +1,42 @@
+name: "siamese_correlation"
+input: "exemplar"
+input_shape {
+    dim: 1
+    dim: 256
+    dim: 6
+    dim: 6
+}
+
+input: "search"
+input_shape {
+    dim: 1
+    dim: 256
+    dim: 22
+    dim: 22
+}
+
+layer {
+    name: "cross_correlation"
+    type: "CrossCorrelation"
+    bottom: "search"
+    bottom: "exemplar"
+    top: "cross"
+    param {
+      lr_mult: 0
+    }
+    param {
+      lr_mult: 0
+    }
+
+    convolution_param {
+    num_output: 1
+    kernel_size: 6
+    stride: 1
+    weight_filler {
+      type: "constant"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}

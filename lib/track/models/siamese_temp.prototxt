@@ -1,0 +1,47 @@
+name: "train_siamese_train"
+layer {
+  name: "pair_data"
+  type: "Python"
+  top: "exemplar"
+  top: "search"
+  top: "label"
+  python_param{
+      module: 'track_data_layer'
+      layer: 'TrackDataLayer'
+      param_str: "'label_size:17'"
+      }
+}
+
+layer {
+    name: "cross_correlation"
+    type: "CrossCorrelation"
+    bottom: "search"
+    bottom: "exemplar"
+    top: "cross"
+#    param {
+#      lr_mult: 1
+#    }
+#    param {
+#      lr_mult: 2
+#    }
+  
+    convolution_param {
+    num_output: 1
+    kernel_size: 5 
+    stride: 1
+    weight_filler {
+      type: "constant"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "loss"
+  type: "MultinomialLogisticLoss"
+  bottom: "cross"
+  bottom: "label"
+  top: "loss"
+}
