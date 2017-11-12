@@ -12,6 +12,7 @@ import numpy.random as npr
 from fast_rcnn.config import cfg
 from fast_rcnn.bbox_transform import bbox_transform
 from utils.cython_bbox import bbox_overlaps
+import pdb
 
 DEBUG = False
 
@@ -125,7 +126,6 @@ def _get_bbox_regression_labels(bbox_target_data, num_classes):
         bbox_target (ndarray): N x 4K blob of regression targets
         bbox_inside_weights (ndarray): N x 4K blob of loss weights
     """
-
     clss = bbox_target_data[:, 0]
     bbox_targets = np.zeros((clss.size, 4 * num_classes), dtype=np.float32)
     # print 'proposal_target_layer:', bbox_targets.shape
@@ -139,10 +139,13 @@ def _get_bbox_regression_labels(bbox_target_data, num_classes):
             bbox_targets[ind, start:end] = bbox_target_data[ind, 1:]
             bbox_inside_weights[ind, start:end] = cfg.TRAIN.BBOX_INSIDE_WEIGHTS
     else:
+        #import pdb
+        #pdb.set_trace()
         for ind in inds:
             cls = clss[ind]
-            start = 4 * cls
-            end = start + 4
+            start = int(4 * cls)
+            end = int(start + 4)
+
             bbox_targets[ind, start:end] = bbox_target_data[ind, 1:]
             bbox_inside_weights[ind, start:end] = cfg.TRAIN.BBOX_INSIDE_WEIGHTS
     return bbox_targets, bbox_inside_weights
@@ -167,6 +170,7 @@ def _sample_rois(all_rois, gt_boxes, fg_rois_per_image, rois_per_image, num_clas
     """Generate a random sample of RoIs comprising foreground and background
     examples.
     """
+    #pdb.set_trace()
     # overlaps: (rois x gt_boxes)
     overlaps = bbox_overlaps(
         np.ascontiguousarray(all_rois[:, 1:5], dtype=np.float),
@@ -180,7 +184,11 @@ def _sample_rois(all_rois, gt_boxes, fg_rois_per_image, rois_per_image, num_clas
     # Guard against the case when an image has fewer than fg_rois_per_image
     # foreground RoIs
     fg_rois_per_this_image = min(fg_rois_per_image, fg_inds.size)
+    fg_rois_per_this_image = int(fg_rois_per_this_image)
     # Sample foreground regions without replacement
+    fg_inds = fg_inds.astype(int)
+    #print fg_inds
+    #print "\n\n"
     if fg_inds.size > 0:
         fg_inds = npr.choice(fg_inds, size=fg_rois_per_this_image, replace=False)
 
@@ -198,17 +206,17 @@ def _sample_rois(all_rois, gt_boxes, fg_rois_per_image, rois_per_image, num_clas
     # The indices that we're selecting (both fg and bg)
     keep_inds = np.append(fg_inds, bg_inds)
     # print 'proposal_target_layer:', keep_inds
-    
+
     # Select sampled values from various arrays:
     labels = labels[keep_inds]
     # Clamp labels for the background RoIs to 0
     labels[fg_rois_per_this_image:] = 0
     rois = all_rois[keep_inds]
-    
+
     # print 'proposal_target_layer:', rois
     bbox_target_data = _compute_targets(
         rois[:, 1:5], gt_boxes[gt_assignment[keep_inds], :4], labels)
-
+    #pdb.set_trace()
     # print 'proposal_target_layer:', bbox_target_data
     bbox_targets, bbox_inside_weights = \
         _get_bbox_regression_labels(bbox_target_data, num_classes)
