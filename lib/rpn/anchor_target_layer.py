@@ -92,11 +92,14 @@ class AnchorTargetLayer(caffe.Layer):
             print 'rpn: gt_boxes', gt_boxes
 
         # 1. Generate proposals from bbox deltas and shifted anchors
+        cen_x = width/2
+        cen_y = height/2
         shift_x = np.arange(0, width) * self._feat_stride
         shift_y = np.arange(0, height) * self._feat_stride
         shift_x, shift_y = np.meshgrid(shift_x, shift_y)
         shifts = np.vstack((shift_x.ravel(), shift_y.ravel(),
                             shift_x.ravel(), shift_y.ravel())).transpose()
+        shifts = np.array([[cen_x, cen_y, cen_x, cen_y]]) * self._feat_stride
         # add A anchors (1, A, 4) to
         # cell K shifts (K, 1, 4) to get
         # shift anchors (K, A, 4)
@@ -106,6 +109,9 @@ class AnchorTargetLayer(caffe.Layer):
         all_anchors = (self._anchors.reshape((1, A, 4)) +
                        shifts.reshape((1, K, 4)).transpose((1, 0, 2)))
         all_anchors = all_anchors.reshape((K * A, 4))
+        print all_anchors
+        print all_anchors.shape
+        exit(0)
         total_anchors = int(K * A)
 
         # only keep anchors inside the image
