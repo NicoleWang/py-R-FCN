@@ -14,7 +14,7 @@ import numpy.random as npr
 from generate_anchors import generate_anchors
 from utils.cython_bbox import bbox_overlaps
 from fast_rcnn.bbox_transform import bbox_transform
-
+np.set_printoptions(threshold=np.nan)
 DEBUG = False
 
 class AnchorTargetLayer(caffe.Layer):
@@ -27,10 +27,14 @@ class AnchorTargetLayer(caffe.Layer):
         layer_params = yaml.load(self.param_str)
         #anchor_scales = layer_params.get('scales', (8, 16, 32))#original
         #self._anchors = generate_anchors(scales=np.array(anchor_scales)) #original
-        anchor_scales = layer_params.get('scales', (1, 2, 4))
+        #anchor_scales = layer_params.get('scales', (1, 2, 4))
+        #anchor_scales = layer_params.get('scales', (1))
+        self._feat_stride = layer_params['feat_stride']
+        anchor_scales = np.array([self._feat_stride])
         self._anchors = generate_anchors(scales=np.array(anchor_scales))
         self._num_anchors = self._anchors.shape[0]
         self._feat_stride = layer_params['feat_stride']
+
 
         if DEBUG:
             print 'anchors:'
@@ -53,6 +57,8 @@ class AnchorTargetLayer(caffe.Layer):
         height, width = bottom[0].data.shape[-2:]
         if DEBUG:
             print 'AnchorTargetLayer: height', height, 'width', width
+        print "stride: ", self._feat_stride
+        print "anchors: ", self._anchors
 
         A = self._num_anchors
         # labels
@@ -73,8 +79,12 @@ class AnchorTargetLayer(caffe.Layer):
         # filter out-of-image anchors
         # measure GT overlap
 
+        #print "stride: ", self._feat_stride
+
         assert bottom[0].data.shape[0] == 1, \
             'Only single item batches are supported'
+
+        #print "init anchors: ", self._anchors
 
         # map of shape (..., H, W)
         height, width = bottom[0].data.shape[-2:]
@@ -107,6 +117,7 @@ class AnchorTargetLayer(caffe.Layer):
                        shifts.reshape((1, K, 4)).transpose((1, 0, 2)))
         all_anchors = all_anchors.reshape((K * A, 4))
         total_anchors = int(K * A)
+        #print "all anchors: ", all_anchors
 
         # only keep anchors inside the image
         inds_inside = np.where(
@@ -122,6 +133,9 @@ class AnchorTargetLayer(caffe.Layer):
 
         # keep only inside anchors
         anchors = all_anchors[inds_inside, :]
+
+        #print "valid anchors: ", anchors
+
         if DEBUG:
             print 'anchors.shape', anchors.shape
 
@@ -131,6 +145,12 @@ class AnchorTargetLayer(caffe.Layer):
 
         # overlaps between the anchors and the gt boxes
         # overlaps (ex, gt)
+
+
+        #print "gt_boxes: ", gt_boxes
+
+
+
         gt_boxes = gt_boxes.reshape(gt_boxes.shape[0], gt_boxes.shape[1])
         overlaps = bbox_overlaps(
             np.ascontiguousarray(anchors, dtype=np.float),

@@ -34,17 +34,19 @@ import numpy as np
 #       [ -79., -167.,   96.,  184.],
 #       [-167., -343.,  184.,  360.]])
 
-def generate_anchors(base_size=16, ratios=[1, 2, 3],
+def generate_anchors(base_size=2, ratios=[1, 2, 3],
                      scales=2**np.arange(3, 6)):
     """
     Generate anchor (reference) windows by enumerating aspect ratios X
     scales wrt a reference (0, 0, 15, 15) window.
     """
+    #import pdb
+    #pdb.set_trace()
 
     base_anchor = np.array([1, 1, base_size, base_size]) - 1
     ratio_anchors = _ratio_enum(base_anchor, ratios)
     anchors = np.vstack([_scale_enum(ratio_anchors[i, :], scales)
-                         for i in xrange(ratio_anchors.shape[0])])
+                         for i in xrange(int(ratio_anchors.shape[0]))])
     return anchors
 
 def _whctrs(anchor):
@@ -89,7 +91,8 @@ def _scale_enum(anchor, scales):
     """
     Enumerate a set of anchors for each scale wrt an anchor.
     """
-
+    #import pdb
+    #pdb.set_trace()
     w, h, x_ctr, y_ctr = _whctrs(anchor)
     ws = w * scales
     hs = h * scales
@@ -99,7 +102,9 @@ def _scale_enum(anchor, scales):
 if __name__ == '__main__':
     import time
     t = time.time()
-    a = generate_anchors()
+    ratios = np.array([1.0, 2.0, 3.0])
+    scales = np.array([1.0])
+    a = generate_anchors(16, ratios, scales)
     print time.time() - t
     print a
-    from IPython import embed; embed()
+#    from IPython import embed; embed()
