@@ -63,7 +63,7 @@ class ProposalLayer(caffe.Layer):
         # return the top proposals (-> RoIs top, scores top)
         #t1 = get_time()
         #t2=timeit.default_timer()
-        #print 'conv time {} ms '.format((t2 - t1)*1000) 
+        #print 'conv time {} ms '.format((t2 - t1)*1000)
         #t1=timeit.default_timer()
 
         assert bottom[0].data.shape[0] == 1, \
@@ -175,7 +175,7 @@ class ProposalLayer(caffe.Layer):
         #global t1
         #t2=timeit.default_timer()
         #print 'proposal layer time {} ms '.format((t2 - t1)*1000)
-        set_time() 
+        set_time()
 
     def backward(self, top, propagate_down, bottom):
         """This layer does not propagate gradients."""

@@ -180,13 +180,13 @@ def im_detect(net, im, boxes=None):
         scores = net.blobs['cls_score'].data
     else:
         # use softmax estimated probabilities
-        #scores = blobs_out['cls_prob'] ###rfcnn
-        scores = blobs_out['text_cls_prob'] ###faster rcnn
+        scores = blobs_out['cls_prob'] ###rfcnn
+        #scores = blobs_out['text_cls_prob'] ###faster rcnn
 
     if cfg.TEST.BBOX_REG:
         # Apply bounding-box regression deltas
-        #box_deltas = blobs_out['bbox_pred'] #rfcnn
-        box_deltas = blobs_out['text_bbox_pred'] ###faster rcnn
+        box_deltas = blobs_out['bbox_pred'] #rfcnn
+        #box_deltas = blobs_out['text_bbox_pred'] ###faster rcnn
         pred_boxes = bbox_transform_inv(boxes, box_deltas)
         pred_boxes = clip_boxes(pred_boxes, im.shape)
     else:

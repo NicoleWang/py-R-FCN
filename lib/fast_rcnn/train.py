@@ -16,7 +16,7 @@ import os
 
 from caffe.proto import caffe_pb2
 import google.protobuf as pb2
-
+import google.protobuf.text_format
 class SolverWrapper(object):
     """A simple wrapper around Caffe's solver.
     This wrapper gives us control over he snapshotting process, which we
@@ -33,6 +33,7 @@ class SolverWrapper(object):
             # RPN can only use precomputed normalization because there are no
             # fixed statistics to compute a priori
             assert cfg.TRAIN.BBOX_NORMALIZE_TARGETS_PRECOMPUTED
+        #print roidb
 
         if cfg.TRAIN.BBOX_REG:
             print 'Computing bounding-box regression targets...'
@@ -45,39 +46,8 @@ class SolverWrapper(object):
             print ('Loading pretrained model '
                    'weights from {:s}').format(pretrained_model)
             self.solver.net.copy_from(pretrained_model)
-            net = self.solver.net
-            net1 = caffe.Net('./models/pascal_voc/VGG16/faster_rcnn_end2end/train_small.prototxt', pretrained_model, caffe.TRAIN)
-
-            #print net.params['conv1_1'][0].data.shape
-            #print net1.params['conv1_1'][0].data.shape
-            #print net.params['conv1_1'][0].data[0, :]
-            #print net1.params['conv1_1'][0].data[0, :]
-            #print net.params['conv1_1'][0].data[0, :]
-            for k, v in net.params.items():
-                #if k == 'conv1_1' or k == 'conv1_2' or k == 'conv2_1' or k == 'conv2_2':
-                if k != 'fc7' and k != 'text_cls_score' and k != 'text_bbox_pred' :
-                    print k
-                    num = net.params[k][0].data.shape[0]
-                    ch = net.params[k][0].data.shape[1]
-                    if k == 'fc6':
-                        net.params[k][0].data[j,0:ch] = net1.params[k][0].data[j, 0:ch]
-                        continue
-                    for j in xrange(num):
-                        print net.params[k][0].data.shape, net1.params[k][0].data.shape
-                        net.params[k][0].data[j,0:ch, :] = net1.params[k][0].data[j, 0:ch, :]
-                    net.params[k][1].data[0:num] = net1.params[k][1].data[0:num]
-                else:
-                     print k
-                     net.params[k][0].data[...] = net1.params[k][0].data[...]
-                     net.params[k][1].data[...] = net1.params[k][1].data[...]
+            print self.solver.net.params;
             #exit()
-            #self.solver.net.params['conv1_1'][0].data[0, :] = 0;
-            #print self.solver.net.params['conv1_1'][0].data[0, :];
-            #self.solver.net.copy_from(pretrained_model)
-            #print net.params['conv1_1'][0].data.shape
-            #self.solver.net.params['conv1_1'][0].data[0, :] = 0;
-            #print self.solver.net.params['conv1_1'][0].data[0, :];
->>>>>>> 6693689b7b3725c6f84acff3b54b969a510c3a74
 
         self.solver_param = caffe_pb2.SolverParameter()
         with open(solver_prototxt, 'rt') as f:
@@ -206,9 +176,12 @@ def filter_roidb(roidb):
     """Remove roidb entries that have no usable RoIs."""
 
     def is_valid(entry):
+        #print entry
         # Valid images have:
         #   (1) At least one foreground RoI OR
         #   (2) At least one background RoI
+        if 'max_overlaps' not in entry.keys():
+            return False
         overlaps = entry['max_overlaps']
         # find boxes with sufficient overlap
         fg_inds = np.where(overlaps >= cfg.TRAIN.FG_THRESH)[0]

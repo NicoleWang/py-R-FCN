@@ -19,6 +19,7 @@ import subprocess
 import uuid
 from voc_eval import voc_eval
 from fast_rcnn.config import cfg
+import json
 
 class text(imdb):
     def __init__(self, image_set, split, devkit_path=None):
@@ -68,7 +69,7 @@ class text(imdb):
         """
         Construct an image path from the image's "index" identifier.
         """
-        image_path = os.path.join(self._data_path, 'JPEGImages', index)
+        image_path = os.path.join(self._data_path, 'images', index)
         assert os.path.exists(image_path), \
                 'Path does not exist: {}'.format(image_path)
         return image_path
@@ -189,35 +190,24 @@ class text(imdb):
         Load image and bounding boxes info from txt file for chinese text data
         format: left top width height
         """
-        filename = os.path.join(self._data_path, 'Annotations', index + '.txt')
+        filename = os.path.join(self._data_path, 'annotations', index[0:-4] + '.json')
         with open(filename) as f:
-            lines = [x.strip() for x in f.readlines() if string.atoi(x.strip().split()[2]) > 3]
+            t_data = json.load(f)
+            all_bboxes = t_data['bbox']
+        if len(all_bboxes) == 0:
+            print filename
+            exit(0)
 
-        num_boxes = len(lines)
+        num_boxes = len(all_bboxes)
         boxes = np.zeros((num_boxes, 4), dtype=np.uint16)
         gt_classes = np.zeros((num_boxes), dtype=np.int32)
         overlaps = np.zeros((num_boxes, self.num_classes), dtype=np.float32)
-
-        box_cnt = 0
-        # Load text bounding boxes into a data frame.
-        for line in lines:
-            line = line.split()
-            x1 = float(string.atoi(line[0]))
-            y1 = float(string.atoi(line[1]))
-            x2 = x1 + float(string.atoi(line[2])) - 1.0
-            y2 = y1 + float(string.atoi(line[3])) - 1.0
-            #print x1, y1, x2, y2
-            if x2 - x1 < 1.5:
-                print x1, x2
-                exit()
-                continue;
+        for idx, roi in enumerate(all_bboxes):
+            x1 = roi[0] + 1 ; y1 = roi[1] + 1; x2 = roi[2] - 1; y2 = roi[3] - 1
             cls = self._class_to_ind['text']
-            boxes[box_cnt, :] = [x1, y1, x2, y2]
-            gt_classes[box_cnt] = cls
-            overlaps[box_cnt, cls] = 1.0
-            box_cnt += 1
-
-
+            boxes[idx, :] = [x1, y1, x2, y2]
+            gt_classes[idx] = cls
+            overlaps[idx, cls] = 1.0
         overlaps = scipy.sparse.csr_matrix(overlaps)
 
         return {'boxes' : boxes,

@@ -35,10 +35,12 @@ __C.TRAIN = edict()
 
 # Scales to use during training (can list multiple scales)
 # Each scale is the pixel size of an image's shortest side
-__C.TRAIN.SCALES = (600,)
+__C.TRAIN.SCALES = (128,)
+#__C.TRAIN.SCALES = (600,)
 
 # Max pixel size of the longest side of a scaled input image
-__C.TRAIN.MAX_SIZE = 1000
+#__C.TRAIN.MAX_SIZE = 1000
+__C.TRAIN.MAX_SIZE = 384
 
 # Images to use per minibatch
 __C.TRAIN.IMS_PER_BATCH = 2
@@ -55,7 +57,7 @@ __C.TRAIN.FG_THRESH = 0.5
 # Overlap threshold for a ROI to be considered background (class = 0 if
 # overlap in [LO, HI))
 __C.TRAIN.BG_THRESH_HI = 0.5
-__C.TRAIN.BG_THRESH_LO = 0.1
+__C.TRAIN.BG_THRESH_LO = 0.0
 
 # Use horizontally-flipped images during training?
 __C.TRAIN.USE_FLIPPED = True
@@ -138,10 +140,12 @@ __C.TEST = edict()
 
 # Scales to use during testing (can list multiple scales)
 # Each scale is the pixel size of an image's shortest side
-__C.TEST.SCALES = (600,)
+__C.TEST.SCALES = (128,)
+#__C.TEST.SCALES = (600,)
 
 # Max pixel size of the longest side of a scaled input image
-__C.TEST.MAX_SIZE = 1000
+__C.TEST.MAX_SIZE = 384
+#__C.TEST.MAX_SIZE = 1000
 
 # Overlap threshold used for non-maximum suppression (suppress boxes with
 # IoU >= this threshold)
@@ -200,8 +204,8 @@ __C.ROOT_DIR = osp.abspath(osp.join(osp.dirname(__file__), '..', '..'))
 
 # Data directory
 __C.DATA_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data'))
-__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/chn_data'))
-__C.TEST_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/test_data/easy100'))
+__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/aic_data'))
+__C.TEST_DIR = osp.abspath(osp.join(__C.ROOT_DIR, '/data00/wangyuzhuo/data/Douyin/nicole_bbox/bat1images/'))
 #__C.TRAIN_DIR = '/home/wangyuzhuo/wangyuzhuo/Data/chn_data/'
 #__C.TEST_DIR = '/home/wangyuzhuo/Data/test_data/easy_100/'
 
@@ -216,6 +220,7 @@ __C.EXP_DIR = 'default'
 
 # Use GPU implementation of non-maximum suppression
 __C.USE_GPU_NMS = True
+#__C.USE_GPU_NMS = False
 
 # Default GPU device id
 __C.GPU_ID = 0

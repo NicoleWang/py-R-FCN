@@ -57,10 +57,11 @@ echo Logging output to "$LOG"
 #--weights data/imagenet_models/${NET}-model.caffemodel \
 #--weights output/rfcn_end2end/text_chn_train/resnet50_rfcn_iter_20000.caffemodel \
 #--weights output/rfcn_end2end/text_chn_train/resnet101_rfcn_iter_230000.caffemodel\
+#--weights output/rfcn_end2end/text_chn_train/resnet50_rfcn_iter_10000.caffemodel\
 time ./tools/train_net.py --gpu ${GPU_ID} \
   --solver models/${PT_DIR}/${NET}/rfcn_end2end/solver.prototxt \
+  --weights output/rfcn_end2end/text_chn_train/resnet50_rfcn_multi_iter_50000.caffemodel \
   --imdb ${TRAIN_IMDB} \
-  --weights data/imagenet_models/${NET}-model.caffemodel\
   --iters ${ITERS} \
   --cfg experiments/cfgs/rfcn_end2end.yml \
   ${EXTRA_ARGS}
