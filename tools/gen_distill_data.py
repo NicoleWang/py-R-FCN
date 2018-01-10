@@ -6,7 +6,7 @@
 # --------------------------------------------------------
 
 """Test a Fast R-CNN network on an imdb (image database)."""
-import sys, os, string
+import sys, os, string, json
 sys.path.insert(0, '/home/wangyuzhuo/ENVS/caffe-for-rfcn/python/')
 sys.path.append('/home/wangyuzhuo/projects/Big_Human_Detection/lib/')
 #import _init_paths
@@ -139,9 +139,9 @@ def post_bbox(img, scores, bboxes, outpath):
     keep = nms(cls_dets, cfg.TEST.NMS)
     cls_dets = cls_dets[keep, :]
     prefix = outpath[0:-4]
-    out_txt = prefix+".txt"
-    vis_detections(img,  cls_dets, outpath, 0.5)
-    #write_result(cls_dets, out_txt)
+    out_txt = prefix+".json"
+    #vis_detections(img,  cls_dets, outpath, 0.5)
+    write_json_result(cls_dets, out_txt)
 
 def post_rois(img, scores, bboxes, outpath):
     thresh = 0.5
@@ -154,8 +154,24 @@ def post_rois(img, scores, bboxes, outpath):
     cls_dets = cls_dets[keep, :]
     prefix = outpath[0:-4]
     #vis_detections(img,  cls_dets, outpath, 0.5)
-    out_txt = prefix+".txt"
+    out_txt = prefix+".json"
     write_result(cls_dets, out_txt)
+
+def write_json_result(boxes, save_path):
+    if boxes.shape[0] < 1:
+        return
+    human = dict()
+    all_boxes = []
+    for i in xrange(boxes.shape[0]):
+        box = boxes[i, 0:4].astype(int)
+        score = boxes[i, 4]
+        if score < 0.65:
+            continue
+        all_boxes.append(box.tolist())
+    human['bbox'] = all_boxes
+    print human
+    with open(save_path, 'w') as f:
+        json.dump(human, f)
 
 def write_result(boxes, save_path):
     if boxes.shape[0] < 1:
@@ -181,8 +197,8 @@ def write_result(boxes, save_path):
     f.close()
 
 if __name__ == '__main__':
-    if len(sys.argv) != 6:
-        print "python test_human.py proto model gpu imgdir outdir"
+    if len(sys.argv) != 8:
+        print "python test_human.py proto model gpu imgdir outdir start end"
         exit()
 
     ##input arguments
@@ -191,6 +207,8 @@ if __name__ == '__main__':
     gpu_id = string.atoi(sys.argv[3])
     imgdir = sys.argv[4]
     outdir = sys.argv[5]
+    start_id = string.atoi(sys.argv[6])
+    end_id = string.atoi(sys.argv[7])
 
     # set device  mode
     if gpu_id >=0 and gpu_id <= 3:
@@ -203,7 +221,9 @@ if __name__ == '__main__':
     net = caffe.Net(deploy_proto, human_model, caffe.TEST)
 
     namelist = os.listdir(imgdir)
-    for name in namelist:
+    for idx, name in enumerate(namelist):
+        if idx < start_id or idx >= end_id:
+            continue
         print "processing ", name
         imgpath = os.path.join(imgdir, name)
         print imgpath

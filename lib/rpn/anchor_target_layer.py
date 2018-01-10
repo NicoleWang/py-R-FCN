@@ -27,7 +27,7 @@ class AnchorTargetLayer(caffe.Layer):
         layer_params = yaml.load(self.param_str)
         #anchor_scales = layer_params.get('scales', (8, 16, 32))#original
         #self._anchors = generate_anchors(scales=np.array(anchor_scales)) #original
-        anchor_scales = layer_params.get('scales', (1, 2, 4))
+        anchor_scales = layer_params.get('scales', (2, 4, 8))
         self._anchors = generate_anchors(scales=np.array(anchor_scales))
         self._num_anchors = self._anchors.shape[0]
         self._feat_stride = layer_params['feat_stride']

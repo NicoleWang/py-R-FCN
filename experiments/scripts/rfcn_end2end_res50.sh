@@ -42,7 +42,7 @@ case $DATASET in
     TRAIN_IMDB="text_chn_train"
     TEST_IMDB="text_chn_test"
     PT_DIR="pascal_voc"
-    ITERS=300000
+    ITERS=800000
     ;;
   *)
     echo "No dataset given"
@@ -62,7 +62,7 @@ echo Logging output to "$LOG"
 time ./tools/train_net.py --gpu ${GPU_ID} \
   --solver models/${PT_DIR}/${NET}/rfcn_end2end/solver.prototxt \
   --imdb ${TRAIN_IMDB} \
-  --weights output/rfcn_end2end/text_chn_train/resnet50_rfcn_mb_ailab_iter_200000.caffemodel \
+  --weights output/rfcn_end2end/text_chn_train/resnet50_rfcn_iter_200000.caffemodel \
   --iters ${ITERS} \
   --cfg experiments/cfgs/rfcn_end2end.yml \
   ${EXTRA_ARGS}

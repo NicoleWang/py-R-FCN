@@ -776,109 +776,109 @@ layer {
   top: "block5_eltsum"
 }
 
-#============ RPN scale 8 ============
-layer {
-  name: "rpn1_conv/3x3"
-  type: "Convolution"
-  bottom: "block5_eltsum"
-  top: "rpn1/output"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
-  convolution_param {
-    num_output: 256
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-}
-layer {
-  name: "rpn1_relu/3x3"
-  type: "ReLU"
-  bottom: "rpn1/output"
-  top: "rpn1/output"
-}
-
-layer {
-  name: "rpn1_cls_score"
-  type: "Convolution"
-  bottom: "rpn1/output"
-  top: "rpn1_cls_score"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
-  convolution_param {
-    num_output: 6   # 2(bg/fg) * 3(anchors)
-    kernel_size: 1 pad: 0 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-}
-layer {
-  name: "rpn1_bbox_pred"
-  type: "Convolution"
-  bottom: "rpn1/output"
-  top: "rpn1_bbox_pred"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
-  convolution_param {
-    num_output: 12   # 4 * 3(anchors)
-    kernel_size: 1 pad: 0 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-}
-
-layer {
-   bottom: "rpn1_cls_score"
-   top: "rpn1_cls_score_reshape"
-   name: "rpn1_cls_score_reshape"
-   type: "Reshape"
-   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
-}
-
-layer {
-  name: 'rpn-data'
-  type: 'Python'
-  bottom: 'rpn1_cls_score'
-  bottom: 'gt_boxes'
-  bottom: 'im_info'
-  bottom: 'data'
-  top: 'rpn1_labels'
-  top: 'rpn1_bbox_targets'
-  top: 'rpn1_bbox_inside_weights'
-  top: 'rpn1_bbox_outside_weights'
-  python_param {
-    module: 'rpn.anchor_target_layer'
-    layer: 'AnchorTargetLayer'
-    param_str: "'feat_stride': 8"
-  }
-}
-
-layer {
-  name: "rpn1_loss_cls"
-  type: "SoftmaxWithLoss"
-  bottom: "rpn1_cls_score_reshape"
-  bottom: "rpn1_labels"
-  propagate_down: 1
-  propagate_down: 0
-  top: "rpn1_cls_loss"
-  loss_weight: 1
-  loss_param {
-    ignore_label: -1
-    normalize: true
-  }
-}
-
-layer {
-  name: "rpn1_loss_bbox"
-  type: "SmoothL1Loss"
-  bottom: "rpn1_bbox_pred"
-  bottom: "rpn1_bbox_targets"
-  bottom: 'rpn1_bbox_inside_weights'
-  bottom: 'rpn1_bbox_outside_weights'
-  top: "rpn1_loss_bbox"
-  loss_weight: 1
-  smooth_l1_loss_param { sigma: 3.0 }
-}
+##============ RPN scale 8 ============
+#layer {
+#  name: "rpn1_conv/3x3"
+#  type: "Convolution"
+#  bottom: "block5_eltsum"
+#  top: "rpn1/output"
+#  param { lr_mult: 1.0 }
+#  param { lr_mult: 2.0 }
+#  convolution_param {
+#    num_output: 256
+#    kernel_size: 3 pad: 1 stride: 1
+#    weight_filler { type: "gaussian" std: 0.01 }
+#    bias_filler { type: "constant" value: 0 }
+#  }
+#}
+#layer {
+#  name: "rpn1_relu/3x3"
+#  type: "ReLU"
+#  bottom: "rpn1/output"
+#  top: "rpn1/output"
+#}
+#
+#layer {
+#  name: "rpn1_cls_score"
+#  type: "Convolution"
+#  bottom: "rpn1/output"
+#  top: "rpn1_cls_score"
+#  param { lr_mult: 1.0 }
+#  param { lr_mult: 2.0 }
+#  convolution_param {
+#    num_output: 6   # 2(bg/fg) * 3(anchors)
+#    kernel_size: 1 pad: 0 stride: 1
+#    weight_filler { type: "gaussian" std: 0.01 }
+#    bias_filler { type: "constant" value: 0 }
+#  }
+#}
+#layer {
+#  name: "rpn1_bbox_pred"
+#  type: "Convolution"
+#  bottom: "rpn1/output"
+#  top: "rpn1_bbox_pred"
+#  param { lr_mult: 1.0 }
+#  param { lr_mult: 2.0 }
+#  convolution_param {
+#    num_output: 12   # 4 * 3(anchors)
+#    kernel_size: 1 pad: 0 stride: 1
+#    weight_filler { type: "gaussian" std: 0.01 }
+#    bias_filler { type: "constant" value: 0 }
+#  }
+#}
+#
+#layer {
+#   bottom: "rpn1_cls_score"
+#   top: "rpn1_cls_score_reshape"
+#   name: "rpn1_cls_score_reshape"
+#   type: "Reshape"
+#   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
+#}
+#
+#layer {
+#  name: 'rpn-data'
+#  type: 'Python'
+#  bottom: 'rpn1_cls_score'
+#  bottom: 'gt_boxes'
+#  bottom: 'im_info'
+#  bottom: 'data'
+#  top: 'rpn1_labels'
+#  top: 'rpn1_bbox_targets'
+#  top: 'rpn1_bbox_inside_weights'
+#  top: 'rpn1_bbox_outside_weights'
+#  python_param {
+#    module: 'rpn.anchor_target_layer'
+#    layer: 'AnchorTargetLayer'
+#    param_str: "'feat_stride': 8"
+#  }
+#}
+#
+#layer {
+#  name: "rpn1_loss_cls"
+#  type: "SoftmaxWithLoss"
+#  bottom: "rpn1_cls_score_reshape"
+#  bottom: "rpn1_labels"
+#  propagate_down: 1
+#  propagate_down: 0
+#  top: "rpn1_cls_loss"
+#  loss_weight: 1
+#  loss_param {
+#    ignore_label: -1
+#    normalize: true
+#  }
+#}
+#
+#layer {
+#  name: "rpn1_loss_bbox"
+#  type: "SmoothL1Loss"
+#  bottom: "rpn1_bbox_pred"
+#  bottom: "rpn1_bbox_targets"
+#  bottom: 'rpn1_bbox_inside_weights'
+#  bottom: 'rpn1_bbox_outside_weights'
+#  top: "rpn1_loss_bbox"
+#  loss_weight: 1
+#  smooth_l1_loss_param { sigma: 3.0 }
+#}
 
 layer {
   name: "block6_conv_proj"

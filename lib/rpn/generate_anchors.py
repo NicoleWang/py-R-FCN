@@ -34,7 +34,9 @@ import numpy as np
 #       [ -79., -167.,   96.,  184.],
 #       [-167., -343.,  184.,  360.]])
 
-def generate_anchors(base_size=16, ratios=[1, 2, 3],
+#def generate_anchors(base_size=16, ratios=[ 1, 2, 3],
+#                     scales=2**np.arange(3, 6)):
+def generate_anchors(base_size=16, ratios=[0.5, 1, 2, 3],
                      scales=2**np.arange(3, 6)):
     """
     Generate anchor (reference) windows by enumerating aspect ratios X
@@ -99,7 +101,7 @@ def _scale_enum(anchor, scales):
 if __name__ == '__main__':
     import time
     t = time.time()
-    a = generate_anchors()
+    a = generate_anchors(scales=np.array([1,2,4]))
     print time.time() - t
     print a
-    from IPython import embed; embed()
+    #from IPython import embed; embed()

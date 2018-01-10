@@ -11,6 +11,6 @@ weight_decay: 0.0005
 # function
 snapshot: 0
 # We still use the snapshot prefix, though
-snapshot_prefix: "resnet50_rfcn"
+snapshot_prefix: "resnet50_douyin_multi"
 iter_size: 2
 # debug_info: true

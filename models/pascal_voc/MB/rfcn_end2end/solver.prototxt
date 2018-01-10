@@ -3,7 +3,7 @@ train_net: "models/pascal_voc/MB/rfcn_end2end/train_agnostic.prototxt"
 base_lr: 0.001
 lr_policy:"step"
 gamma: 0.9
-stepsize: 80000
+stepsize: 100000
 display: 20
 
 momentum: 0.9
@@ -12,6 +12,6 @@ weight_decay: 0.0005
 # function
 snapshot: 0
 # We still use the snapshot prefix, though
-snapshot_prefix: "resnet50_rfcn_finetune"
+snapshot_prefix: "rfcn_mb_douyin_single_distill"
 iter_size: 2
 # debug_info: true

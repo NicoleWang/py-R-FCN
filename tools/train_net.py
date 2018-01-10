@@ -83,6 +83,7 @@ if __name__ == '__main__':
     print(args)
 
     if args.cfg_file is not None:
+        print "Come Here"
         cfg_from_file(args.cfg_file)
     if args.set_cfgs is not None:
         cfg_from_list(args.set_cfgs)

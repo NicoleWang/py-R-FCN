@@ -40,7 +40,7 @@ __C.TRAIN.SCALES = (128,)
 
 # Max pixel size of the longest side of a scaled input image
 #__C.TRAIN.MAX_SIZE = 1000
-__C.TRAIN.MAX_SIZE = 384
+__C.TRAIN.MAX_SIZE = 256
 
 # Images to use per minibatch
 __C.TRAIN.IMS_PER_BATCH = 2
@@ -60,7 +60,8 @@ __C.TRAIN.BG_THRESH_HI = 0.5
 __C.TRAIN.BG_THRESH_LO = 0.0
 
 # Use horizontally-flipped images during training?
-__C.TRAIN.USE_FLIPPED = True
+#__C.TRAIN.USE_FLIPPED = True
+__C.TRAIN.USE_FLIPPED = False
 
 # Train bounding-box regressors
 __C.TRAIN.BBOX_REG = True
@@ -100,7 +101,8 @@ __C.TRAIN.PROPOSAL_METHOD = 'selective_search'
 # Make minibatches from images that have similar aspect ratios (i.e. both
 # tall and thin or both short and wide) in order to avoid wasting computation
 # on zero-padding.
-__C.TRAIN.ASPECT_GROUPING = True
+#__C.TRAIN.ASPECT_GROUPING = True
+__C.TRAIN.ASPECT_GROUPING = False
 
 # Use RPN to detect objects
 __C.TRAIN.HAS_RPN = False
@@ -144,7 +146,7 @@ __C.TEST.SCALES = (128,)
 #__C.TEST.SCALES = (600,)
 
 # Max pixel size of the longest side of a scaled input image
-__C.TEST.MAX_SIZE = 384
+__C.TEST.MAX_SIZE = 256
 #__C.TEST.MAX_SIZE = 1000
 
 # Overlap threshold used for non-maximum suppression (suppress boxes with
@@ -204,8 +206,11 @@ __C.ROOT_DIR = osp.abspath(osp.join(osp.dirname(__file__), '..', '..'))
 
 # Data directory
 __C.DATA_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data'))
-__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/aic_data'))
-__C.TEST_DIR = osp.abspath(osp.join(__C.ROOT_DIR, '/data00/wangyuzhuo/data/Douyin/nicole_bbox/bat1images/'))
+#__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/aic_data'))
+#__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/aiLab_data'))
+__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/douyin_data'))
+#__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/douyin_multi'))
+__C.TEST_DIR = osp.abspath(osp.join(__C.ROOT_DIR, '/data00/wangyuzhuo/data/Douyin/nicole_bbox/Bat1Images/'))
 #__C.TRAIN_DIR = '/home/wangyuzhuo/wangyuzhuo/Data/chn_data/'
 #__C.TEST_DIR = '/home/wangyuzhuo/Data/test_data/easy_100/'
 
@@ -219,8 +224,8 @@ __C.MATLAB = 'matlab'
 __C.EXP_DIR = 'default'
 
 # Use GPU implementation of non-maximum suppression
-__C.USE_GPU_NMS = True
-#__C.USE_GPU_NMS = False
+#__C.USE_GPU_NMS = True
+__C.USE_GPU_NMS = False
 
 # Default GPU device id
 __C.GPU_ID = 0

@@ -51,6 +51,10 @@ class imdb(object):
     def roidb_handler(self, val):
         self._roidb_handler = val
 
+    @image_index.setter
+    def image_index(self, val):
+        self._image_index = val
+
     def set_proposal_method(self, method):
         method = eval('self.' + method + '_roidb')
         self.roidb_handler = method
