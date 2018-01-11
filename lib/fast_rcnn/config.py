@@ -35,12 +35,12 @@ __C.TRAIN = edict()
 
 # Scales to use during training (can list multiple scales)
 # Each scale is the pixel size of an image's shortest side
-__C.TRAIN.SCALES = (128,)
-#__C.TRAIN.SCALES = (600,)
+__C.TRAIN.SCALES = (256,)
+#__C.TRAIN.SCALES = (512,)
 
 # Max pixel size of the longest side of a scaled input image
 #__C.TRAIN.MAX_SIZE = 1000
-__C.TRAIN.MAX_SIZE = 256
+__C.TRAIN.MAX_SIZE = 512
 
 # Images to use per minibatch
 __C.TRAIN.IMS_PER_BATCH = 2
@@ -142,7 +142,7 @@ __C.TEST = edict()
 
 # Scales to use during testing (can list multiple scales)
 # Each scale is the pixel size of an image's shortest side
-__C.TEST.SCALES = (128,)
+__C.TEST.SCALES = (256,)
 #__C.TEST.SCALES = (600,)
 
 # Max pixel size of the longest side of a scaled input image
@@ -209,6 +209,8 @@ __C.DATA_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data'))
 #__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/aic_data'))
 #__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/aiLab_data'))
 __C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/douyin_data'))
+__C.TRAIN_IMAGE_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_image_list.txt'))
+__C.TRAIN_LABEL_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_label_list.txt'))
 #__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/douyin_multi'))
 __C.TEST_DIR = osp.abspath(osp.join(__C.ROOT_DIR, '/data00/wangyuzhuo/data/Douyin/nicole_bbox/Bat1Images/'))
 #__C.TRAIN_DIR = '/home/wangyuzhuo/wangyuzhuo/Data/chn_data/'

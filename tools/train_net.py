@@ -14,6 +14,7 @@ from fast_rcnn.train import get_training_roidb, train_net
 from fast_rcnn.config import cfg, cfg_from_file, cfg_from_list, get_output_dir
 from datasets.factory import get_imdb
 import datasets.imdb
+import datasets.text
 import caffe
 import argparse
 import pprint
@@ -59,21 +60,26 @@ def parse_args():
 
 def combined_roidb(imdb_names):
     def get_roidb(imdb_name):
-        imdb = get_imdb(imdb_name)
+        #imdb = get_imdb(imdb_name)
+        imdb = datasets.text.text()
         print 'Loaded dataset `{:s}` for training'.format(imdb.name)
         imdb.set_proposal_method(cfg.TRAIN.PROPOSAL_METHOD)
         print 'Set proposal method: {:s}'.format(cfg.TRAIN.PROPOSAL_METHOD)
         roidb = get_training_roidb(imdb)
-        return roidb
-
+        return imdb, roidb
+    '''
     roidbs = [get_roidb(s) for s in imdb_names.split('+')]
     roidb = roidbs[0]
+    '''
+    imdb, roidb = get_roidb(imdb_names)
+    '''
     if len(roidbs) > 1:
         for r in roidbs[1:]:
             roidb.extend(r)
         imdb = datasets.imdb.imdb(imdb_names)
     else:
         imdb = get_imdb(imdb_names)
+    '''
     return imdb, roidb
 
 if __name__ == '__main__':

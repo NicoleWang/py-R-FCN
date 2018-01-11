@@ -18,33 +18,49 @@ from fast_rcnn.config import cfg
 import json
 
 class text(imdb):
-    def __init__(self, image_set, split, devkit_path=None):
-        imdb.__init__(self, 'text_' + image_set + '_' + split)
-        self._split = split # split : train / test
-        self._image_set = image_set # image_set: chn / eng
+    def __init__(self,devkit_path=None):
+        imdb.__init__(self, 'human')
+        #self._split = split # split : train / test
+        #self._image_set = image_set # image_set: chn / eng
         self._devkit_path = self._get_default_path() if devkit_path is None \
                             else devkit_path
+        self._train_image_list = self._load_name_list(cfg.TRAIN_IMAGE_LIST)
+        self._train_label_list = self._load_name_list(cfg.TRAIN_LABEL_LIST)
+        #print self._train_image_list
+        #print self._train_label_list
+
+        '''
         if self._split == 'train':
             self._data_path = cfg.TRAIN_DIR
         if self._split == 'test':
             self._data_path = cfg.TEST_DIR
+        '''
 
         self._classes = ('__background__', # always index 0
                          'text')
         self._class_to_ind = dict(zip(self.classes, xrange(self.num_classes)))
-        #self._image_ext = '.jpg'
-        self._image_index = self._load_image_set_index()
+        #self._image_index = self._load_image_set_index()
+        self._image_index = self._train_image_list
 
         assert os.path.exists(self._devkit_path), \
                 'VOCdevkit path does not exist: {}'.format(self._devkit_path)
+        '''
         assert os.path.exists(self._data_path), \
                 'Path does not exist: {}'.format(self._data_path)
+        '''
 
     def image_path_at(self, i):
         """
         Return the absolute path to image i in the image sequence.
         """
-        return self.image_path_from_index(self._image_index[i])
+        #return self.image_path_from_index(self._image_index[i])
+        return self._image_index[i]
+    def _load_name_list(self, filepath):
+        assert os.path.isfile(filepath), \
+                'File does not exist: {}'.format(filepath)
+        with open(filepath) as f:
+            namelist = [x.strip() for x in f.readlines()]
+        return namelist
 
     def image_path_from_index(self, index):
         """
@@ -97,7 +113,7 @@ class text(imdb):
             return roidb
 
         gt_roidb_temp = [self._load_text_annotation(index)
-                    for index in self.image_index]
+                    for index in self._train_label_list]
         image_index = []
         gt_roidb = []
         for i in xrange(len(gt_roidb_temp)):
@@ -188,14 +204,15 @@ class text(imdb):
         """
         ####wangyuzhuo
         #filename = os.path.join(self._data_path, 'annotations256', index[0:-4] + '.json')
-        filename = os.path.join(self._data_path, 'distill_annotations', index[0:-4] + '.json')
+        #filename = os.path.join(self._data_path, 'distill_annotations', index[0:-4] + '.json')
         #filename = os.path.join(self._data_path, 'annotations', index[0:-4] + '.json')
-        with open(filename) as f:
+        #print index
+        with open(index) as f:
             t_data = json.load(f)
             #all_bboxes = [t_data['bbox']]
             all_bboxes = t_data['bbox']
         if len(all_bboxes) == 0:
-            print filename
+            print index
             return {'boxes':[]}
 
         num_boxes = len(all_bboxes)
