@@ -62,8 +62,8 @@ echo Logging output to "$LOG"
 #--weights output/rfcn_end2end/text_chn_train/resnet50_rfcn_iter_200000.caffemodel \
 time ./tools/train_net.py --gpu ${GPU_ID} \
   --solver models/${PT_DIR}/${NET}/rfcn_end2end/solver.prototxt \
+  --weights models/rfcn_models/resnet50_rfcn_final.caffemodel \
   --imdb ${TRAIN_IMDB} \
-  --weights output/rfcn_end2end/human/resnet50_coco_multi_iter_10000.caffemodel \
   --iters ${ITERS} \
   --cfg experiments/cfgs/rfcn_end2end.yml \
   ${EXTRA_ARGS}

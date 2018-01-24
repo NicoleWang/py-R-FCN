@@ -19,7 +19,8 @@ import json
 
 class text(imdb):
     def __init__(self,devkit_path=None):
-        imdb.__init__(self, 'human')
+        #imdb.__init__(self, 'aiLab')
+        imdb.__init__(self, 'douyin')
         #self._split = split # split : train / test
         #self._image_set = image_set # image_set: chn / eng
         self._devkit_path = self._get_default_path() if devkit_path is None \
@@ -220,7 +221,7 @@ class text(imdb):
         gt_classes = np.zeros((num_boxes), dtype=np.int32)
         overlaps = np.zeros((num_boxes, self.num_classes), dtype=np.float32)
         for idx, roi in enumerate(all_bboxes):
-            x1 = max(0, roi[0] + 1) ; y1 = roi[1] + 1; x2 = roi[2] - 1; y2 = roi[3] - 1
+            x1 = max(0, roi[0] + 1) ; y1 = max(0, roi[1] + 1); x2 = roi[2] - 1; y2 = roi[3] - 1
             cls = self._class_to_ind['text']
             boxes[idx, :] = [x1, y1, x2, y2]
             gt_classes[idx] = cls

@@ -34,15 +34,24 @@ import numpy as np
 #       [ -79., -167.,   96.,  184.],
 #       [-167., -343.,  184.,  360.]])
 
-def generate_anchors(base_size=16, ratios=[ 1, 2, 3],
-                     scales=2**np.arange(3, 6)):
+#def generate_anchors(base_size=16, ratios=[ 1, 2, 3],
+#                     scales=2**np.arange(3, 6)):
 #def generate_anchors(base_size=16, ratios=[0.5, 1, 2, 3],
 #                     scales=2**np.arange(3, 6)):
+def generate_anchors(base_size=16, net_type="RES50"):
     """
     Generate anchor (reference) windows by enumerating aspect ratios X
     scales wrt a reference (0, 0, 15, 15) window.
     """
-
+    if net_type == "RES50":
+        ratios=[1,2,3]
+        scales=2**np.arange(3,6)
+    elif net_type == "MB":
+        ratios=[0.5,1,2,3]
+        scales=2**np.arange(3,6)
+    else:
+        print "Undefined net type"
+        exit()
     base_anchor = np.array([1, 1, base_size, base_size]) - 1
     ratio_anchors = _ratio_enum(base_anchor, ratios)
     anchors = np.vstack([_scale_enum(ratio_anchors[i, :], scales)

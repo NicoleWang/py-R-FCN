@@ -42,6 +42,10 @@ __C.TRAIN.SCALES = (256,)
 #__C.TRAIN.MAX_SIZE = 1000
 __C.TRAIN.MAX_SIZE = 512
 
+### Network Type : different type has different
+__C.TRAIN.NET_TYPE = "MB"
+#__C.TRAIN.NET_TYPE = "RES50"
+
 # Images to use per minibatch
 __C.TRAIN.IMS_PER_BATCH = 2
 
@@ -105,7 +109,7 @@ __C.TRAIN.PROPOSAL_METHOD = 'selective_search'
 __C.TRAIN.ASPECT_GROUPING = False
 
 # Use RPN to detect objects
-__C.TRAIN.HAS_RPN = False
+__C.TRAIN.HAS_RPN = True
 # IOU >= thresh: positive example
 __C.TRAIN.RPN_POSITIVE_OVERLAP = 0.7
 # IOU < thresh: negative example
@@ -146,7 +150,7 @@ __C.TEST.SCALES = (256,)
 #__C.TEST.SCALES = (600,)
 
 # Max pixel size of the longest side of a scaled input image
-__C.TEST.MAX_SIZE = 256
+__C.TEST.MAX_SIZE = 512
 #__C.TEST.MAX_SIZE = 1000
 
 # Overlap threshold used for non-maximum suppression (suppress boxes with
@@ -209,8 +213,16 @@ __C.DATA_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data'))
 #__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/aic_data'))
 #__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/aiLab_data'))
 __C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/douyin_data'))
-__C.TRAIN_IMAGE_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_image_list.txt'))
-__C.TRAIN_LABEL_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_label_list.txt'))
+#__C.TRAIN_IMAGE_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_image_list.txt'))
+#__C.TRAIN_LABEL_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_label_list.txt'))
+#__C.TRAIN_IMAGE_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_aic_image_list.txt'))
+#__C.TRAIN_LABEL_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_aic_label_list.txt'))
+__C.TRAIN_IMAGE_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_douyin_multi_image.txt'))
+__C.TRAIN_LABEL_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_douyin_multi_label.txt'))
+#__C.TRAIN_IMAGE_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_aiLab_image.txt'))
+#__C.TRAIN_LABEL_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_aiLab_label.txt'))
+#__C.TRAIN_IMAGE_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_all_image.txt'))
+#__C.TRAIN_LABEL_LIST = osp.abspath(osp.join(__C.ROOT_DIR, 'data/train/train_all_label.txt'))
 #__C.TRAIN_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data/douyin_multi'))
 __C.TEST_DIR = osp.abspath(osp.join(__C.ROOT_DIR, '/data00/wangyuzhuo/data/Douyin/nicole_bbox/Bat1Images/'))
 #__C.TRAIN_DIR = '/home/wangyuzhuo/wangyuzhuo/Data/chn_data/'
